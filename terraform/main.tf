@@ -1,3 +1,6 @@
+provider "aws"{
+  region = "ap-south-1"
+}
 resource "aws_vpc" "new_vpc" {
   cidr_block = "172.16.0.0/20"
   
@@ -43,7 +46,7 @@ resource "aws_security_group" "all_traffic" {
   description = "Allow all inbound and all outbound traffic"
   vpc_id      = aws_vpc.new_vpc.id
 
-  ingress {
+   ingress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
@@ -59,16 +62,19 @@ resource "aws_security_group" "all_traffic" {
 }
 
 resource "aws_instance" "test_first" {
-  ami                          = "ami-03bb6d83c60fc5f7c"
-  instance_type                = "t2.medium"
-  key_name                     = "test1"
-  vpc_security_group_ids       = [aws_security_group.all_traffic.id]
-  subnet_id                    = aws_subnet.example_subnet.id
-  associate_public_ip_address  = true
-  user_data                    = data.template_file.web_userdata.rendered
+  ami           = "ami-03bb6d83c60fc5f7c"
+  instance_type = "t2.micro"
+  key_name      = "ubuntu"
+  vpc_security_group_ids = [aws_security_group.all_traffic.id]
+  subnet_id     = aws_subnet.example_subnet.id
+  associate_public_ip_address = true  # Enable auto-assignment of public IP
+  user_data = "${data.template_file.web-userdata.rendered}"
   tags = {
     Name     = "HelloWorld"
     Stage    = "testing"
     Location = "India"
   }
+}
+data "template_file" "web-userdata" {
+        template = "${file("dockerinstall.sh")}"
 }

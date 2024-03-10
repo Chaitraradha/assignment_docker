@@ -66,9 +66,11 @@ pipeline {
             }
             steps {
                 dir('assignment_docker/terraform') {
-                    sh 'terraform apply -input=false tfplan'
+                    // Use -auto-approve flag if autoApprove is true
+                    sh "terraform apply -input=false -auto-approve=${params.autoApprove} tfplan"
                 }
             }
         }
     }
 }
+

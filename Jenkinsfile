@@ -1,6 +1,9 @@
 pipeline {
-    agent {docker { image 'terraform:1.0' }
-          }
+    agent {
+        docker {
+            image 'terraform:1.0'
+        }
+    }
         
     parameters {
         string(name: 'environment', defaultValue: 'terraform', description: 'Workspace/environment file to use for deployment')
@@ -15,21 +18,22 @@ pipeline {
     }
 
     stages {
-         stage('Checkout') {
-    steps {
-        script {
-            if (!fileExists('assignment-docker')) {
-                sh 'git clone "https://github.com/Chaitraradha/assignment_docker.git"'
-            } else {
-                echo 'Directory already exists, skipping cloning.'
+        stage('Checkout') {
+            steps {
+                script {
+                    if (!fileExists('assignment-docker')) {
+                        sh 'git clone "https://github.com/Chaitraradha/assignment_docker.git"'
+                    } else {
+                        dir('assignment-docker') {
+                            sh 'git pull'
+                        }
+                    }
+                }
             }
         }
-    }
-}
-
 
         stage('Terraform Init') {
-         steps {
+            steps {
                 dir('assignment-docker/terraform') {
                     script {
                         sh 'terraform init'
@@ -74,4 +78,5 @@ pipeline {
             }
         }
     } 
-}   
+}
+

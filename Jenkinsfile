@@ -1,5 +1,5 @@
 pipeline {
-    agent {docker { image 'my_terraform:1.0'}
+    agent {docker { image 'terraform'}
           }
 
     parameters {
@@ -18,7 +18,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 sh 'rm -rf assignment-docker' 
-                sh 'git clone "https://github.com/tarundanda147/assignment-docker.git"'
+                sh 'git clone ""'
             }
         }
 
@@ -68,17 +68,4 @@ pipeline {
             }
         }
         
-        stage('Destroy') {
-            when {
-                expression { params.destroy }
-            }
-            steps {
-                input message: 'Do you want to destroy the infrastructure?',
-                      ok: 'Destroy'
-                dir('assignment-docker/terraform') {
-                    sh 'terraform destroy -auto-approve'
-                }
-            }
-        }
-    }
-}
+     

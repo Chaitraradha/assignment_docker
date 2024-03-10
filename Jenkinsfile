@@ -18,18 +18,20 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                script {
-                    if (!fileExists('assignment-docker')) {
-                        sh 'git clone "https://github.com/Chaitraradha/assignment_docker.git"'
-                    } else {
-                        dir('assignment-docker') {
-                            sh 'git pull'
-                        }
-                    }
+             stage('Checkout') {
+    steps {
+        script {
+            if (fileExists('assignment-docker')) {
+                dir('assignment-docker') {
+                    sh 'git pull'
                 }
+            } else {
+                sh 'git clone "https://github.com/Chaitraradha/assignment_docker.git"'
             }
+        }
+    }
+}
+
         }
 
         stage('Terraform Init') {

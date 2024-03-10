@@ -15,15 +15,21 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                sh 'rm -rf assignment-docker' 
+         stage('Checkout') {
+    steps {
+        script {
+            if (!fileExists('assignment-docker')) {
                 sh 'git clone "https://github.com/Chaitraradha/assignment_docker.git"'
+            } else {
+                echo 'Directory already exists, skipping cloning.'
             }
         }
+    }
+}
+
 
         stage('Terraform Init') {
-            steps {
+         steps {
                 dir('assignment-docker/terraform') {
                     script {
                         sh 'terraform init'

@@ -22,7 +22,7 @@ pipeline {
             steps {
                 script {
                     if (!fileExists('assignment-docker')) {
-                        sh 'git clone "https://github.com/Chaitraradha/assignment_docker.git"'
+                        sh 'git clone "https://github.com/Chaitraradha/assignment_docker"'
                     } else {
                         dir('assignment-docker') {
                             sh 'git pull'

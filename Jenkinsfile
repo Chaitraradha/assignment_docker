@@ -1,5 +1,5 @@
 pipeline {
-    agent {docker { image 'terraform' }
+    agent {docker { image 'terraform:1.0' }
           }
         
     parameters {

@@ -1,5 +1,5 @@
 pipeline {
-    agent {docker { image 'terraform:1.0'}
+    agent {docker { image 'terraform_image:1.0' }
           }
     
     stages {

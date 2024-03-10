@@ -2,7 +2,6 @@ pipeline {
     agent {
         docker {
             image 'terraform_image:1.0'
-            args '-v /home/ubuntu/docker:/workspace'  // Mounting the host directory to /workspace in the Docker container
         }
     }
     
@@ -10,13 +9,13 @@ pipeline {
         stage('Terraform') {
             steps {
                 script {
-                    // Change to the workspace directory
-                    sh 'cd /workspace'
-                    sh 'terraform init'
-                    sh 'terraform plan'
-                    sh 'terraform apply -auto-approve'
+                    docker.image('terraform_image:1.0').inside('-v /home/ubuntu/docker:/workspace') {
+                        // Change to the workspace directory
+                        sh 'cd /workspace && terraform init && terraform plan && terraform apply -auto-approve'
+                    }
                 }
             }
         }
     }
 }
+

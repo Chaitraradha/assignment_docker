@@ -20,21 +20,14 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                script {
-                    if (!fileExists('assignment-docker')) {
-                        sh 'git clone "https://github.com/Chaitraradha/assignment_docker"'
-                    } else {
-                        dir('assignment-docker') {
-                            sh 'git pull'
-                        }
-                    }
-                }
+                sh 'rm -rf assignment_docker' 
+                sh 'git clone ""'
             }
         }
 
         stage('Terraform Init') {
             steps {
-                dir('assignment-docker/terraform') {
+                dir('assignment_docker/terraform') {
                     script {
                         sh 'terraform init'
                     }
@@ -44,7 +37,7 @@ pipeline {
 
         stage('Terraform Plan') {
             steps {
-                dir('assignment-docker/terraform') {
+                dir('assignment_docker/terraform') {
                     script {
                         sh "terraform plan -input=false -out=tfplan"
                         sh 'terraform show -no-color tfplan > tfplan.txt'
@@ -60,7 +53,7 @@ pipeline {
             }
             steps {
                 script {
-                    def plan = readFile 'assignment-docker/terraform/tfplan.txt'
+                    def plan = readFile 'assignment_docker/terraform/tfplan.txt'
                     input message: "Do you want to apply the plan?",
                           parameters: [text(name: 'Plan', description: 'Please review the plan', defaultValue: plan)]
                 }
@@ -72,12 +65,23 @@ pipeline {
                 not { equals expected: true, actual: params.destroy }
             }
             steps {
-                dir('assignment-docker/terraform') {
+                dir('assignment_docker/terraform') {
                     sh 'terraform apply -input=false tfplan'
                 }
             }
         }
-    } 
+        
+        stage('Destroy') {
+            when {
+                expression { params.destroy }
+            }
+            steps {
+                input message: 'Do you want to destroy the infrastructure?',
+                      ok: 'Destroy'
+                dir('assignment_docker/terraform') {
+                    sh 'terraform destroy -auto-approve'
+                }
+            }
+        }
+    }
 }
-
-
